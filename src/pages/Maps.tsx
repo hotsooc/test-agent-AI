@@ -18,7 +18,6 @@ export default function Maps({ language }: { language: string }) {
     const fetchMaps = async () => {
       try {
         const data = await getMaps(language);
-        // Filter out test maps or duplicates if any
         const filtered = data.filter((map: MapData) => map.displayName && map.listViewIcon);
         setMaps(filtered);
         setLoading(false);
@@ -34,7 +33,6 @@ export default function Maps({ language }: { language: string }) {
 
   return (
     <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', fontFamily: "'Outfit', sans-serif" }}>
-      {/* Page Title */}
       <div style={{ textAlign: 'left', marginBottom: '32px' }}>
         <h2 style={{ color: '#ff4655', letterSpacing: '2px', fontSize: '14px', fontWeight: 'bold', margin: '0 0 4px 0' }}>
           {isVi ? 'VALORANT BẢN ĐỒ' : 'VALORANT MAPS'}
@@ -44,7 +42,6 @@ export default function Maps({ language }: { language: string }) {
         </h1>
       </div>
 
-      {/* Maps Grid */}
       <Row gutter={[24, 24]}>
         {maps.map((map) => (
           <Col xs={24} sm={12} md={8} key={map.uuid}>
@@ -60,7 +57,6 @@ export default function Maps({ language }: { language: string }) {
                 }}
                 styles={{ body: { padding: 0 } }}
               >
-                {/* Map Splash Background */}
                 <div style={{ height: '180px', position: 'relative', overflow: 'hidden' }}>
                   <img
                     src={map.splash}
@@ -84,7 +80,6 @@ export default function Maps({ language }: { language: string }) {
                   />
                 </div>
 
-                {/* Map Info Box */}
                 <div style={{ padding: '20px', textAlign: 'left' }}>
                   <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#ffffff', margin: '0 0 4px 0', letterSpacing: '1px' }}>
                     {map.displayName.toUpperCase()}
@@ -100,7 +95,6 @@ export default function Maps({ language }: { language: string }) {
         ))}
       </Row>
 
-      {/* Map Tactical Minimap Modal */}
       <Modal
         title={
           selectedMap ? (
@@ -131,7 +125,6 @@ export default function Maps({ language }: { language: string }) {
         {selectedMap && (
           <div style={{ fontFamily: "'Outfit', sans-serif" }}>
             <Row gutter={[24, 24]} align="middle">
-              {/* Splash Art */}
               <Col xs={24} md={12}>
                 <div style={{ borderRadius: '6px', overflow: 'hidden', border: '1px solid #2e303a' }}>
                   <img
@@ -151,7 +144,6 @@ export default function Maps({ language }: { language: string }) {
                 </div>
               </Col>
 
-              {/* Minimap Tactical Overlay */}
               <Col xs={24} md={12}>
                 <div
                   style={{

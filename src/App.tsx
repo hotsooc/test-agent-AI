@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ConfigProvider, theme } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThreeBackground from './components/ThreeBackground';
@@ -7,7 +7,7 @@ import Agents from './pages/Agents';
 import Weapons from './pages/Weapons';
 import Maps from './pages/Maps';
 import Viewer3D from './pages/Viewer3D';
-import './App.css';
+import './index.css';
 import Updates from './pages/Updates';
 
 export default function App() {

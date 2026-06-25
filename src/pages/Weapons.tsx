@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Card, Row, Col, Radio, Modal, Avatar, Tooltip, Progress, Table, Image, Tag, Button, Input } from 'antd';
-import { ThunderboltOutlined, SecurityScanOutlined, PlaySquareOutlined, SearchOutlined } from '@ant-design/icons';
+import { PlaySquareOutlined, SearchOutlined } from '@ant-design/icons';
 import { getWeapons } from '../api/valorant';
 import Loader from '../components/Loader';
 import { Weapon, Skin } from '../types/valorant';
@@ -52,8 +52,9 @@ export default function Weapons({ language }: { language: string }) {
 
   const filteredWeapons = weapons.filter((weapon: Weapon) => {
     if (selectedCategory === 'ALL') return true;
-    if (selectedCategory === 'Melee') return !weapon.shopData;
-    return weapon.shopData?.category === selectedCategory;
+    const parts = weapon.category.split('::');
+    const shortCategory = parts[parts.length - 1];
+    return shortCategory === selectedCategory;
   });
 
   const handleOpenDetails = (weapon: Weapon) => {
