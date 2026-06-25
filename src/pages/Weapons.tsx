@@ -59,9 +59,7 @@ export default function Weapons({ language }: { language: string }) {
 
   const handleOpenDetails = (weapon: Weapon) => {
     setSelectedWeapon(weapon);
-    const skins = weapon.skins || [];
-    const firstSkin = skins.find(s => s.displayIcon && s.displayName.indexOf('Standard') === -1) || skins[0];
-    setActiveSkin(firstSkin || null);
+    setActiveSkin(null);
     setActiveChromaIdx(0);
     setActiveLevelIdx(-1);
     setSearchTerm('');
@@ -323,188 +321,217 @@ export default function Weapons({ language }: { language: string }) {
             </Row>
 
             <div>
-              <div style={{ color: '#ff4655', fontWeight: 'bold', fontSize: '14px', letterSpacing: '1px', marginBottom: '16px', borderBottom: '1px solid #2e303a', paddingBottom: '8px' }}>
-                {isVi ? 'BỘ SƯU TẬP SKINS VŨ KHÍ' : 'WEAPON SKINS COLLECTION'} ({getFilteredSkins().length})
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid #2e303a', paddingBottom: '8px' }}>
+                <span style={{ color: '#ff4655', fontWeight: 'bold', fontSize: '14px', letterSpacing: '1px' }}>
+                  {isVi ? 'BỘ SƯU TẬP SKINS VŨ KHÍ' : 'WEAPON SKINS COLLECTION'} ({getFilteredSkins().length})
+                </span>
+                <div style={{ width: '220px' }}>
+                  <Input
+                    placeholder={isVi ? "Tìm kiếm skin..." : "Search skins..."}
+                    prefix={<SearchOutlined style={{ color: '#ff4655' }} />}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{
+                      background: 'rgba(15, 25, 35, 0.8)',
+                      border: '1px solid #2e303a',
+                      color: '#fff',
+                    }}
+                    className="search-skin-input"
+                  />
+                </div>
               </div>
 
               <Row gutter={[16, 16]}>
-                <Col xs={24} md={8}>
-                  <div style={{ marginBottom: '12px' }}>
-                    <Input
-                      placeholder={isVi ? "Tìm kiếm skin..." : "Search skins..."}
-                      prefix={<SearchOutlined style={{ color: '#ff4655' }} />}
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      style={{
-                        background: 'rgba(15, 25, 35, 0.8)',
-                        border: '1px solid #2e303a',
-                        color: '#fff',
-                      }}
-                      className="search-skin-input"
-                    />
-                  </div>
-
-                  <div
-                    style={{
-                      maxHeight: '450px',
-                      overflowY: 'auto',
-                      borderRight: '1px solid #2e303a',
-                      paddingRight: '10px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '8px',
-                    }}
-                  >
-                    {getFilteredSkins().map((skin) => (
-                      <div
-                        key={skin.uuid}
-                        onClick={() => selectSkin(skin)}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          padding: '10px',
-                          cursor: 'pointer',
-                          borderRadius: '4px',
-                          background: activeSkin?.uuid === skin.uuid ? '#ff465515' : 'rgba(255,255,255,0.02)',
-                          border: activeSkin?.uuid === skin.uuid ? '1px solid #ff4655' : '1px solid transparent',
-                          transition: 'all 0.2s ease',
-                        }}
-                      >
-                        <Avatar src={skin.displayIcon} shape="square" size="large" style={{ background: '#1c252e', padding: '2px' }} />
-                        <span style={{ fontSize: '13px', color: activeSkin?.uuid === skin.uuid ? '#ff4655' : '#fff', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
-                          {skin.displayName}
-                        </span>
-                      </div>
-                    ))}
-                    {getFilteredSkins().length === 0 && (
-                      <div style={{ color: '#555c64', textAlign: 'center', padding: '20px 0', fontSize: '13px' }}>
-                        {isVi ? 'Không tìm thấy skin nào.' : 'No skins found.'}
-                      </div>
-                    )}
-                  </div>
-                </Col>
-
-                <Col xs={24} md={16}>
-                  {activeSkin && (
-                    <div
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.02)',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
-                        borderRadius: '8px',
-                        padding: '24px',
-                        textAlign: 'center',
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                      }}
+                {getFilteredSkins().map((skin) => (
+                  <Col xs={12} sm={8} md={6} key={skin.uuid}>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => selectSkin(skin)}
+                      style={{ height: '100%' }}
                     >
-                      <div>
-                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#ffffff', marginBottom: '16px' }}>
-                          {activeSkin.displayName.toUpperCase()}
-                        </div>
-                        <div style={{ minHeight: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Image
-                            src={
-                              activeSkin.chromas?.[activeChromaIdx]?.displayIcon ||
-                              activeSkin.displayIcon || ''
-                            }
-                            alt={activeSkin.displayName}
-                            style={{
-                              maxWidth: '100%',
-                              maxHeight: '140px',
-                              objectFit: 'contain',
-                            }}
+                      <Card
+                        hoverable
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.02)',
+                          border: '1px solid rgba(255, 70, 85, 0.12)',
+                          borderRadius: '8px',
+                          height: '100%',
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                          overflow: 'hidden',
+                        }}
+                        styles={{ body: { padding: '12px', display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between', minHeight: '130px' } }}
+                      >
+                        <div style={{ height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+                          <img
+                            src={skin.displayIcon || ''}
+                            alt={skin.displayName}
+                            style={{ maxWidth: '100%', maxHeight: '55px', objectFit: 'contain' }}
                           />
                         </div>
-                      </div>
+                        <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {skin.displayName}
+                        </div>
+                      </Card>
+                    </motion.div>
+                  </Col>
+                ))}
+                {getFilteredSkins().length === 0 && (
+                  <Col span={24}>
+                    <div style={{ color: '#555c64', textAlign: 'center', padding: '40px 0', fontSize: '13px' }}>
+                      {isVi ? 'Không tìm thấy skin nào.' : 'No skins found.'}
+                    </div>
+                  </Col>
+                )}
+              </Row>
+            </div>
+          </div>
+        )}
+      </Modal>
 
-                      <div style={{ marginTop: '20px' }}>
-                        {activeSkin.chromas && activeSkin.chromas.length > 1 && (
-                          <div style={{ marginBottom: '16px' }}>
-                            <div style={{ color: '#8f9499', fontSize: '12px', marginBottom: '6px', textAlign: 'left' }}>
-                              {isVi ? 'CÁC PHIÊN BẢN MÀU SẮC (CHROMAS)' : 'SKIN CHROMAS (COLOR VARIATIONS)'}
-                            </div>
-                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-start' }}>
-                              {activeSkin.chromas.map((chroma, idx) => (
-                                <Tooltip key={chroma.uuid} title={chroma.displayName}>
-                                  <div
-                                    onClick={() => setActiveChromaIdx(idx)}
-                                    style={{
-                                      width: '32px',
-                                      height: '32px',
-                                      border: activeChromaIdx === idx ? '2px solid #ff4655' : '1px solid #2e303a',
-                                      borderRadius: '4px',
-                                      padding: '2px',
-                                      cursor: 'pointer',
-                                      background: '#1c252e',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                    }}
-                                  >
-                                    <img
-                                      src={chroma.swatch || chroma.displayIcon || activeSkin.displayIcon || ''}
-                                      alt=""
-                                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                                    />
-                                  </div>
-                                </Tooltip>
-                              ))}
-                            </div>
+      {/* Nested Skin Detail Modal */}
+      <Modal
+        title={
+          activeSkin ? (
+            <div style={{ color: '#ffffff', fontFamily: "'Outfit', sans-serif" }}>
+              <span style={{ fontSize: '18px', fontWeight: 'bold', letterSpacing: '0.5px' }}>
+                {activeSkin.displayName.toUpperCase()}
+              </span>
+              <span style={{ color: '#ff4655', fontSize: '11px', marginLeft: '12px', textTransform: 'uppercase', borderLeft: '2px solid #2e303a', paddingLeft: '12px' }}>
+                {isVi ? 'CHI TIẾT SKIN' : 'SKIN DETAILS'}
+              </span>
+            </div>
+          ) : null
+        }
+        open={activeSkin !== null}
+        onCancel={() => {
+          setActiveSkin(null);
+          setActiveChromaIdx(0);
+          setActiveLevelIdx(-1);
+        }}
+        footer={null}
+        width={750}
+        styles={{
+          body: {
+            background: '#0c1015',
+            color: '#ffffff',
+            padding: '24px',
+          }
+        }}
+        wrapClassName="valorant-modal-wrap"
+        style={{ top: 80 }}
+      >
+        {activeSkin && (
+          <div style={{ fontFamily: "'Outfit', sans-serif" }}>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid rgba(255, 255, 255, 0.05)',
+                borderRadius: '8px',
+                padding: '24px',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ minHeight: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Image
+                  src={
+                    activeSkin.chromas?.[activeChromaIdx]?.displayIcon ||
+                    activeSkin.displayIcon || ''
+                  }
+                  alt={activeSkin.displayName}
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '180px',
+                    objectFit: 'contain',
+                  }}
+                />
+              </div>
+
+              <div style={{ marginTop: '20px' }}>
+                {activeSkin.chromas && activeSkin.chromas.length > 1 && (
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{ color: '#8f9499', fontSize: '12px', marginBottom: '6px', textAlign: 'left' }}>
+                      {isVi ? 'CÁC PHIÊN BẢN MÀU SẮC (CHROMAS)' : 'SKIN CHROMAS (COLOR VARIATIONS)'}
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-start' }}>
+                      {activeSkin.chromas.map((chroma, idx) => (
+                        <Tooltip key={chroma.uuid} title={chroma.displayName}>
+                          <div
+                            onClick={() => setActiveChromaIdx(idx)}
+                            style={{
+                              width: '36px',
+                              height: '36px',
+                              border: activeChromaIdx === idx ? '2px solid #ff4655' : '1px solid #2e303a',
+                              borderRadius: '4px',
+                              padding: '2px',
+                              cursor: 'pointer',
+                              background: '#1c252e',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
+                            <img
+                              src={chroma.swatch || chroma.displayIcon || activeSkin.displayIcon || ''}
+                              alt=""
+                              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                            />
                           </div>
-                        )}
+                        </Tooltip>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-                        {activeSkin.levels &&
-                          activeSkin.levels.some((level) => level.streamedVideo) && (
-                            <div style={{ textAlign: 'left', marginTop: '16px' }}>
-                              <div style={{ color: '#8f9499', fontSize: '12px', marginBottom: '8px' }}>
-                                <PlaySquareOutlined /> {isVi ? 'HOẠT ẢNH NÂNG CẤP (VFX / FINISHER)' : 'UPGRADE ANIMATIONS (VFX / FINISHER)'}
-                              </div>
-                              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
-                                {activeSkin.levels
-                                  .filter((level) => level.streamedVideo)
-                                  .map((level, idx) => {
-                                    const mainIdx = activeSkin.levels.findIndex(l => l.uuid === level.uuid);
-                                    return (
-                                      <Button
-                                        key={level.uuid}
-                                        type="default"
-                                        size="small"
-                                        onClick={() => setActiveLevelIdx(mainIdx)}
-                                        style={{
-                                          background: activeLevelIdx === mainIdx ? '#ff465522' : 'rgba(255,255,255,0.05)',
-                                          color: '#ff4655',
-                                          borderColor: '#ff4655',
-                                          fontSize: '11px',
-                                          fontWeight: activeLevelIdx === mainIdx ? 'bold' : 'normal',
-                                        }}
-                                      >
-                                        {level.displayName.split('Level')[1] || (isVi ? `Cấp ${idx + 1}` : `Lvl ${idx + 1}`)}
-                                      </Button>
-                                    );
-                                  })}
-                              </div>
-
-                              {activeLevelIdx !== -1 && activeSkin.levels[activeLevelIdx]?.streamedVideo && (
-                                <div style={{ border: '1px solid rgba(255, 70, 85, 0.3)', borderRadius: '6px', overflow: 'hidden', background: '#000', marginTop: '8px' }}>
-                                  <video
-                                    key={activeSkin.levels[activeLevelIdx].streamedVideo || ''}
-                                    src={activeSkin.levels[activeLevelIdx].streamedVideo || ''}
-                                    controls
-                                    autoPlay={false}
-                                    style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                          )}
+                {activeSkin.levels &&
+                  activeSkin.levels.some((level) => level.streamedVideo) && (
+                    <div style={{ textAlign: 'left', marginTop: '16px' }}>
+                      <div style={{ color: '#8f9499', fontSize: '12px', marginBottom: '8px' }}>
+                        <PlaySquareOutlined /> {isVi ? 'HOẠT ẢNH NÂNG CẤP (VFX / FINISHER)' : 'UPGRADE ANIMATIONS (VFX / FINISHER)'}
                       </div>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+                        {activeSkin.levels
+                          .filter((level) => level.streamedVideo)
+                          .map((level, idx) => {
+                            const mainIdx = activeSkin.levels.findIndex(l => l.uuid === level.uuid);
+                            return (
+                              <Button
+                                key={level.uuid}
+                                type="default"
+                                size="small"
+                                onClick={() => setActiveLevelIdx(mainIdx)}
+                                style={{
+                                  background: activeLevelIdx === mainIdx ? '#ff465522' : 'rgba(255,255,255,0.05)',
+                                  color: '#ff4655',
+                                  borderColor: '#ff4655',
+                                  fontSize: '11px',
+                                  fontWeight: activeLevelIdx === mainIdx ? 'bold' : 'normal',
+                                }}
+                              >
+                                {level.displayName.split('Level')[1] || (isVi ? `Cấp ${idx + 1}` : `Lvl ${idx + 1}`)}
+                              </Button>
+                            );
+                          })}
+                      </div>
+
+                      {activeLevelIdx !== -1 && activeSkin.levels[activeLevelIdx]?.streamedVideo && (
+                        <div style={{ border: '1px solid rgba(255, 70, 85, 0.3)', borderRadius: '6px', overflow: 'hidden', background: '#000', marginTop: '8px' }}>
+                          <video
+                            key={activeSkin.levels[activeLevelIdx].streamedVideo || ''}
+                            src={activeSkin.levels[activeLevelIdx].streamedVideo || ''}
+                            controls
+                            autoPlay={false}
+                            style={{ width: '100%', maxHeight: '300px', objectFit: 'contain' }}
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
-                </Col>
-              </Row>
+              </div>
             </div>
           </div>
         )}

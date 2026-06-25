@@ -11,6 +11,7 @@ export const getAgents = async (lang: string = 'vi-VN'): Promise<Agent[]> => {
         isPlayableCharacter: true,
       },
     });
+    console.log('abc: ', response)
     return response.data.data;
   } catch (error) {
     console.error('Lỗi khi tải danh sách đặc vụ:', error);
