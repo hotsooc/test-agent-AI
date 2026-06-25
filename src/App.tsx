@@ -7,15 +7,14 @@ import Agents from './pages/Agents';
 import Weapons from './pages/Weapons';
 import Maps from './pages/Maps';
 import Viewer3D from './pages/Viewer3D';
-import Updates from './pages/Updates';
 import './App.css';
+import Updates from './pages/Updates';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('home');
   const [language, setLanguage] = useState<string>('vi-VN');
 
-  // Render components based on activeTab and pass down language
-  const renderPage = (): JSX.Element => {
+  const renderPage = () => {
     switch (activeTab) {
       case 'home':
         return <Home setActiveTab={setActiveTab} language={language} />;
@@ -48,7 +47,7 @@ export default function App() {
       theme={{
         algorithm: theme.darkAlgorithm,
         token: {
-          colorPrimary: '#ff4655', // Valorant Red
+          colorPrimary: '#ff4655',
           colorBgBase: '#0c1015',
           colorTextBase: '#ffffff',
           fontFamily: "'Outfit', sans-serif",
@@ -69,20 +68,16 @@ export default function App() {
       }}
     >
       <div className="min-h-screen flex flex-col relative">
-        {/* Dynamic 3D Particles Background */}
         <ThreeBackground />
 
-        {/* Cyberpunk styled top Header Navigation */}
         <header className="sticky top-0 z-50 flex items-center justify-between h-[80px] px-[40px] bg-[#0c1015cc] backdrop-blur-md border-b-2 border-[#ff4655] shadow-[0_0_20px_rgba(255,70,85,0.25)] max-lg:flex-col max-lg:h-auto max-lg:gap-4 max-lg:py-4 max-lg:px-4">
           
-          {/* Logo */}
           <div className="text-[24px] font-black tracking-[3px] cursor-pointer flex items-center gap-2 select-none group" onClick={() => setActiveTab('home')}>
             <span className="text-[#ff4655] font-black group-hover:text-white transition-colors">//</span>
             <span className="text-white font-black tracking-[4px]">VALORANT</span>
             <span className="text-white opacity-60 font-light text-[18px] border-l border-white/20 pl-2">WIKI</span>
           </div>
 
-          {/* Navigation Links - Separated gap-8 */}
           <nav className="flex gap-[32px] h-full items-center max-lg:flex-wrap max-lg:justify-center max-lg:gap-3">
             {navItems.map((item) => (
               <button
@@ -108,9 +103,7 @@ export default function App() {
             ))}
           </nav>
 
-          {/* Right Side: Language Switcher + Status */}
           <div className="flex items-center gap-6 max-lg:gap-4">
-            {/* Cyberpunk Language Switcher */}
             <div className="flex border border-[#ff46554d] p-[2px] rounded bg-black/40 shadow-[0_0_10px_rgba(255,70,85,0.05)]">
               <button
                 className={`px-3 py-1 text-[10px] font-bold tracking-[1px] cursor-pointer rounded-sm transition-all ${language === 'vi-VN' ? 'bg-[#ff4655] text-white shadow-[0_0_8px_rgba(255,70,85,0.4)]' : 'text-[#8f9499] hover:text-white bg-transparent'}`}
@@ -132,7 +125,6 @@ export default function App() {
           </div>
         </header>
 
-        {/* Dynamic transition container */}
         <main className="flex-1 w-full">
           <AnimatePresence mode="wait">
             <motion.div
@@ -148,7 +140,6 @@ export default function App() {
           </AnimatePresence>
         </main>
 
-        {/* Tactical Footer */}
         <footer className="h-[60px] border-t border-[rgba(255,255,255,0.05)] bg-[#080c10d9] flex flex-col items-center justify-center gap-1 text-[12px] text-[#555c64] py-[10px] font-mono">
           <div>
             &copy; 2026 VALORANT Wiki 3D. Powered by AgentGemini & Antigravity.

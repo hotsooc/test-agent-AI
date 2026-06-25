@@ -1,11 +1,10 @@
-import React, { useRef, useMemo } from 'react';
+import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 function Particles({ count = 1200 }: { count?: number }) {
   const pointsRef = useRef<THREE.Points>(null);
 
-  // Create random particles positions and velocities
   const [positions, velocities] = useMemo(() => {
     const pos = new Float32Array(count * 3);
     const vel = new Float32Array(count * 3);
@@ -21,7 +20,6 @@ function Particles({ count = 1200 }: { count?: number }) {
     return [pos, vel];
   }, [count]);
 
-  // Animate the particles
   useFrame((state) => {
     const points = pointsRef.current;
     if (!points) return;
@@ -29,22 +27,18 @@ function Particles({ count = 1200 }: { count?: number }) {
     const currentPositions = points.geometry.attributes.position.array as Float32Array;
     const time = state.clock.getElapsedTime();
 
-    // Mouse movement influence
     const mouseX = state.pointer.x * 2;
     const mouseY = state.pointer.y * 2;
 
     for (let i = 0; i < count; i++) {
-      // Basic movement
       currentPositions[i * 3] += velocities[i * 3];
       currentPositions[i * 3 + 1] += velocities[i * 3 + 1];
       currentPositions[i * 3 + 2] += velocities[i * 3 + 2];
 
-      // Bounce back if they go out of bounds
       if (Math.abs(currentPositions[i * 3]) > 25) velocities[i * 3] *= -1;
       if (Math.abs(currentPositions[i * 3 + 1]) > 25) velocities[i * 3 + 1] *= -1;
       if (Math.abs(currentPositions[i * 3 + 2]) > 25) velocities[i * 3 + 2] *= -1;
 
-      // Mouse interactive drift
       currentPositions[i * 3] += Math.sin(time + i) * 0.005 + mouseX * 0.002;
       currentPositions[i * 3 + 1] += Math.cos(time + i) * 0.005 + mouseY * 0.002;
     }

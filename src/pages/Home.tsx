@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Button, Row, Col, Card, Avatar, Tooltip, Tag } from 'antd';
 import {
@@ -55,14 +55,13 @@ export default function Home({
 }) {
   const [featuredAgent, setFeaturedAgent] = useState<Agent | null>(null);
   const [maps, setMaps] = useState<MapData[]>([]);
-  const [weapons, setWeapons] = useState<Weapon[]>([]);
+  const [_, setWeapons] = useState<Weapon[]>([]);
   const [activeMapIdx, setActiveMapIdx] = useState<number>(0);
   const [isPlayingVoice, setIsPlayingVoice] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const isVi = language === 'vi-VN';
 
-  // Fetch data for spotlight and map slideshow
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,7 +71,6 @@ export default function Home({
           getWeapons(language),
         ]);
 
-        // Select Jett or Reyna or Reyna if available, else first
         const uniqueAgents = agentsData.filter(
           (agent, index, self) =>
             self.findIndex((a) => a.uuid === agent.uuid) === index
@@ -97,7 +95,6 @@ export default function Home({
     fetchData();
   }, [language]);
 
-  // Slideshow auto-rotate for maps
   useEffect(() => {
     if (maps.length === 0) return;
     const interval = setInterval(() => {
@@ -158,9 +155,7 @@ export default function Home({
         fontFamily: "'Outfit', sans-serif",
       }}
     >
-      {/* Hero Section */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '30px', alignItems: 'center', marginBottom: '60px' }} className="max-md:flex max-md:flex-col-reverse">
-        {/* Hero Left Content */}
         <motion.div variants={itemVariants} style={{ textAlign: 'left' }}>
           <h1
             style={{
@@ -229,7 +224,6 @@ export default function Home({
           </div>
         </motion.div>
 
-        {/* Hero Right: 3D rotating Crystal */}
         <motion.div variants={itemVariants} style={{ height: '300px' }}>
           <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
             <ambientLight intensity={0.7} />
@@ -240,7 +234,6 @@ export default function Home({
         </motion.div>
       </div>
 
-      {/* Spectacular Section 1: Agent Spotlight */}
       {featuredAgent && (
         <motion.div variants={itemVariants} style={{ marginBottom: '60px' }}>
           <div
@@ -255,11 +248,9 @@ export default function Home({
               overflow: 'hidden',
             }}
           >
-            {/* Visual glow background */}
             <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', borderRadius: '50%', background: '#ff4655', filter: 'blur(100px)', opacity: 0.15, pointerEvents: 'none' }} />
 
             <Row gutter={[32, 32]} align="middle">
-              {/* Left Column: Spotlight details */}
               <Col xs={24} md={14} style={{ zIndex: 2 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                   <Tag color="red" style={{ fontWeight: 'bold', fontSize: '10px', letterSpacing: '1px', textTransform: 'uppercase' }}>
@@ -295,7 +286,6 @@ export default function Home({
                     </Button>
                   )}
 
-                  {/* Skills icons preview */}
                   <div style={{ display: 'flex', gap: '8px' }}>
                     {featuredAgent.abilities?.slice(0, 4).map((ab) => (
                       ab.displayIcon && (
@@ -318,7 +308,6 @@ export default function Home({
                 </div>
               </Col>
 
-              {/* Right Column: Agent Full portrait absolute overlapping */}
               <Col xs={24} md={10} style={{ display: 'flex', justifyContent: 'center', zIndex: 1 }}>
                 {featuredAgent.fullPortraitV2 && (
                   <motion.img
@@ -339,9 +328,7 @@ export default function Home({
         </motion.div>
       )}
 
-      {/* Spectacular Section 2: Maps slideshow & updates */}
       <Row gutter={[24, 24]} style={{ marginBottom: '60px' }}>
-        {/* Maps Slideshow (Left side) */}
         <Col xs={24} md={14}>
           <motion.div variants={itemVariants} style={{ height: '100%' }}>
             <div
@@ -382,7 +369,6 @@ export default function Home({
                         alt=""
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
-                      {/* Gradient overlap */}
                       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%)', padding: '16px 20px' }}>
                         <h4 style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold', margin: 0 }}>
                           {maps[activeMapIdx].displayName.toUpperCase()}
@@ -399,7 +385,6 @@ export default function Home({
           </motion.div>
         </Col>
 
-        {/* Patch Notes News Box (Right side) */}
         <Col xs={24} md={10}>
           <motion.div variants={itemVariants} style={{ height: '100%' }}>
             <div
@@ -458,7 +443,6 @@ export default function Home({
         </Col>
       </Row>
 
-      {/* Nav cards - Keep as smaller portal blocks */}
       <motion.div variants={itemVariants}>
         <Row gutter={[24, 24]}>
           <Col xs={24} sm={12} md={6}>

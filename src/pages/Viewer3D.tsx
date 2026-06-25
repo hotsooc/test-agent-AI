@@ -1,10 +1,8 @@
-import React from 'react';
 import ModelViewer from '../components/ModelViewer';
 
 export default function Viewer3D() {
   return (
     <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', fontFamily: "'Outfit', sans-serif" }}>
-      {/* Title */}
       <div style={{ textAlign: 'left', marginBottom: '16px' }}>
         <h2 style={{ color: '#ff4655', letterSpacing: '2px', fontSize: '14px', fontWeight: 'bold', margin: '0 0 4px 0' }}>
           3D MODEL HUB
@@ -17,7 +15,6 @@ export default function Viewer3D() {
         </p>
       </div>
 
-      {/* Model Viewer Component */}
       <ModelViewer />
     </div>
   );

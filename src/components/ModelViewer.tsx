@@ -1,13 +1,11 @@
-import React, { useState, useRef, useEffect, useMemo, Suspense } from 'react';
+import { useState, useRef, useEffect, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Center, Stars, Html } from '@react-three/drei';
-// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import { Upload, Button, Slider, Radio, Space, Card, Alert, message } from 'antd';
 import { UploadOutlined, RotateRightOutlined, SettingOutlined } from '@ant-design/icons';
 
-// A default 3D sci-fi energy blade for the viewer (so we don't have an empty screen)
 function DefaultModel({ materialType, colorTheme }: { materialType: string; colorTheme: string }) {
   const groupRef = useRef<THREE.Group>(null);
   const bladeRef = useRef<THREE.Mesh>(null);
@@ -34,10 +32,9 @@ function DefaultModel({ materialType, colorTheme }: { materialType: string; colo
     }
   });
 
-  // Material selection
   const material = useMemo(() => {
     const mainColor = colorTheme === 'red' ? '#ff4655' : '#00ffff';
-    const accentColor = colorTheme === 'red' ? '#ff808b' : '#80ffff';
+    // const accentColor = colorTheme === 'red' ? '#ff808b' : '#80ffff';
 
     if (materialType === 'hologram') {
       return new THREE.MeshPhysicalMaterial({
@@ -63,7 +60,6 @@ function DefaultModel({ materialType, colorTheme }: { materialType: string; colo
         wireframe: true,
       });
     } else {
-      // Normal / Cyberpunk style
       return new THREE.MeshStandardMaterial({
         color: mainColor,
         metalness: 0.8,
@@ -90,37 +86,31 @@ function DefaultModel({ materialType, colorTheme }: { materialType: string; colo
 
   return (
     <group ref={groupRef}>
-      {/* Blade / Laser Part */}
       <mesh ref={bladeRef} position={[0, 1.2, 0]}>
         <boxGeometry args={[0.15, 2.5, 0.05]} />
         <primitive object={material} attach="material" />
       </mesh>
 
-      {/* Crossguard */}
       <mesh position={[0, -0.1, 0]}>
         <boxGeometry args={[0.8, 0.15, 0.15]} />
         <primitive object={hiltMaterial} attach="material" />
       </mesh>
 
-      {/* Hilt */}
       <mesh position={[0, -0.6, 0]}>
         <cylinderGeometry args={[0.08, 0.08, 0.9, 16]} />
         <primitive object={hiltMaterial} attach="material" />
       </mesh>
 
-      {/* Pommel */}
       <mesh position={[0, -1.1, 0]}>
         <sphereGeometry args={[0.12, 16, 16]} />
         <primitive object={hiltMaterial} attach="material" />
       </mesh>
 
-      {/* Floating Energy Core */}
       <mesh ref={coreRef} position={[0, -0.1, 0]}>
         <sphereGeometry args={[0.15, 16, 16]} />
         <primitive object={coreMaterial} attach="material" />
       </mesh>
 
-      {/* Floating Rings */}
       <mesh ref={ringRef} position={[0, 0.6, 0]}>
         <torusGeometry args={[0.4, 0.02, 8, 32]} />
         <primitive object={material} attach="material" />
@@ -133,17 +123,14 @@ function DefaultModel({ materialType, colorTheme }: { materialType: string; colo
   );
 }
 
-// Renders the custom uploaded model with bounding box resizing
 function UploadedModelRenderer({ model, materialType, colorTheme }: { model: THREE.Group; materialType: string; colorTheme: string }) {
   const modelRef = useRef<any>(null);
 
   useEffect(() => {
     if (!model) return;
 
-    // Traverse the model to apply custom materials if selected
     model.traverse((child: any) => {
       if (child.isMesh) {
-        // Backup original material if not already done
         if (!child.userData.originalMaterial) {
           child.userData.originalMaterial = child.material.clone();
         }
@@ -171,7 +158,6 @@ function UploadedModelRenderer({ model, materialType, colorTheme }: { model: THR
             wireframe: true,
           });
         } else {
-          // Restore original
           child.material = child.userData.originalMaterial;
         }
       }
@@ -181,7 +167,6 @@ function UploadedModelRenderer({ model, materialType, colorTheme }: { model: THR
   return <primitive object={model} ref={modelRef} />;
 }
 
-// Auto-rotate controller
 function CameraController({ autoRotate }: { autoRotate: boolean }) {
   const { camera } = useThree();
   useFrame((state) => {
@@ -205,7 +190,6 @@ export default function ModelViewer() {
   const [autoRotate, setAutoRotate] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // File loading handler
   const handleUpload = (file: any) => {
     setLoading(true);
     const reader = new FileReader();
@@ -243,7 +227,7 @@ export default function ModelViewer() {
     };
 
     reader.readAsArrayBuffer(file);
-    return false; // Prevent auto-upload
+    return false; 
   };
 
   const handleReset = () => {
@@ -255,7 +239,6 @@ export default function ModelViewer() {
   return (
     <div style={{ padding: '24px 0' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px', minHeight: '600px' }}>
-        {/* Visualizer Canvas */}
         <div
           style={{
             position: 'relative',
@@ -287,7 +270,6 @@ export default function ModelViewer() {
             </div>
           )}
 
-          {/* Valorant Hologram Hud elements overlayed on the canvas */}
           <div
             style={{
               position: 'absolute',
@@ -326,7 +308,6 @@ export default function ModelViewer() {
             <CameraController autoRotate={autoRotate} />
           </Canvas>
 
-          {/* Grid helper indicator on the floor of the canvas */}
           <div
             style={{
               position: 'absolute',
@@ -346,7 +327,6 @@ export default function ModelViewer() {
           </div>
         </div>
 
-        {/* Configurations Side Panel */}
         <div>
           <Card
             title={

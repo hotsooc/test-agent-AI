@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Timeline, Card, Tag, Collapse } from 'antd';
 import { CaretRightOutlined, InfoCircleOutlined } from '@ant-design/icons';
@@ -166,9 +165,9 @@ export default function Updates({ language }: { language: string }) {
 
   const getTagColor = (type: 'buff' | 'nerf' | 'adjust') => {
     switch (type) {
-      case 'buff': return '#52c41a'; // green
-      case 'nerf': return '#ff4d4f'; // red
-      case 'adjust': return '#1890ff'; // blue
+      case 'buff': return '#52c41a'; 
+      case 'nerf': return '#ff4d4f'; 
+      case 'adjust': return '#1890ff'; 
     }
   };
 
@@ -190,7 +189,6 @@ export default function Updates({ language }: { language: string }) {
 
   return (
     <div style={{ padding: '40px 20px', maxWidth: '900px', margin: '0 auto', fontFamily: "'Outfit', sans-serif" }}>
-      {/* Title */}
       <div style={{ textAlign: 'left', marginBottom: '40px' }}>
         <h2 style={{ color: '#ff4655', letterSpacing: '2px', fontSize: '14px', fontWeight: 'bold', margin: '0 0 4px 0' }}>
           {isVi ? 'VALORANT PATCH NOTES' : 'VALORANT PATCH NOTES'}
@@ -205,7 +203,6 @@ export default function Updates({ language }: { language: string }) {
         </p>
       </div>
 
-      {/* Timeline of Patches */}
       <Timeline mode="left">
         {patchData.map((patch, patchIdx) => (
           <Timeline.Item
@@ -282,7 +279,7 @@ export default function Updates({ language }: { language: string }) {
                         borderRadius: '4px',
                         overflow: 'hidden',
                       }}
-                      headerClass="updates-collapse-header"
+                      className="updates-collapse-header"
                     >
                       <ul style={{ paddingLeft: '20px', margin: 0, color: '#d1d5db', fontSize: '13px', lineHeight: '1.8' }}>
                         {(isVi ? change.details : change.detailsEn).map((detail, dIdx) => (

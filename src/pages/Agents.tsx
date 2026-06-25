@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Row, Col, Radio, Drawer, Avatar, Tag, Button, Tooltip } from 'antd';
 import { PlayCircleOutlined, PauseCircleOutlined } from '@ant-design/icons';
@@ -13,7 +13,6 @@ export default function Agents({ language }: { language: string }) {
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [activeAbility, setActiveAbility] = useState<Ability | null>(null);
   
-  // Audio state
   const [isPlayingVoice, setIsPlayingVoice] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -24,7 +23,6 @@ export default function Agents({ language }: { language: string }) {
     const fetchAgents = async () => {
       try {
         const data = await getAgents(language);
-        // Remove duplicated Sova (sometimes API returns duplicates of Sova or older versions)
         const uniqueAgents = data.filter(
           (agent, index, self) =>
             self.findIndex((a) => a.uuid === agent.uuid) === index
@@ -40,10 +38,23 @@ export default function Agents({ language }: { language: string }) {
   }, [language]);
 
   const roles = ['ALL', 'DUELIST', 'INITIATOR', 'SENTINEL', 'CONTROLLER'];
+  const getRoleDisplayName = (role: string) => {
+    if (role === 'ALL') return isVi ? 'Tất cả' : 'All';
+    if (isVi) {
+      switch (role) {
+        case 'DUELIST': return 'ĐỐI ĐẦU';
+        case 'INITIATOR': return 'KHỞI TRANH';
+        case 'SENTINEL': return 'HỘ VỆ';
+        case 'CONTROLLER': return 'KIỂM SOÁT';
+        default: return role;
+      }
+    }
+    return role;
+  };
 
   const filteredAgents = agents.filter((agent: Agent) => {
     if (selectedRole === 'ALL') return true;
-    return agent.role?.displayName.toUpperCase() === selectedRole;
+    return agent.role?.displayName.toUpperCase() === getRoleDisplayName(selectedRole);
   });
 
   const handleOpenDetails = (agent: Agent) => {
@@ -89,7 +100,6 @@ export default function Agents({ language }: { language: string }) {
 
   return (
     <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', fontFamily: "'Outfit', sans-serif" }}>
-      {/* Page Title */}
       <div style={{ textAlign: 'left', marginBottom: '32px' }}>
         <h2 style={{ color: '#ff4655', letterSpacing: '2px', fontSize: '14px', fontWeight: 'bold', margin: '0 0 4px 0' }}>
           {isVi ? 'VALORANT ĐẶC VỰ' : 'VALORANT AGENTS'}
@@ -99,7 +109,6 @@ export default function Agents({ language }: { language: string }) {
         </h1>
       </div>
 
-      {/* Filter Category Tabs */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px' }}>
         <Radio.Group
           value={selectedRole}
@@ -131,13 +140,12 @@ export default function Agents({ language }: { language: string }) {
                 transition: 'all 0.3s ease',
               }}
             >
-              {role === 'ALL' ? (isVi ? 'Tất cả' : 'All') : role}
+              {getRoleDisplayName(role)}
             </Radio.Button>
           ))}
         </Radio.Group>
       </div>
 
-      {/* Agents Grid List */}
       <motion.div layout>
         <Row gutter={[24, 24]}>
           <AnimatePresence>
@@ -163,7 +171,6 @@ export default function Agents({ language }: { language: string }) {
                     }}
                     styles={{ body: { padding: 0 } }}
                   >
-                    {/* Agent Background Splash Card */}
                     <div
                       style={{
                         height: '220px',
@@ -206,7 +213,6 @@ export default function Agents({ language }: { language: string }) {
                       )}
                     </div>
 
-                    {/* Agent Brief Info */}
                     <div style={{ padding: '16px', textAlign: 'left' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span
@@ -237,7 +243,6 @@ export default function Agents({ language }: { language: string }) {
         </Row>
       </motion.div>
 
-      {/* Drawer Detail View */}
       <Drawer
         title={
           selectedAgent ? (
@@ -271,7 +276,6 @@ export default function Agents({ language }: { language: string }) {
       >
         {selectedAgent && (
           <div style={{ fontFamily: "'Outfit', sans-serif" }}>
-            {/* Visual representation */}
             <div
               style={{
                 display: 'flex',
@@ -294,7 +298,6 @@ export default function Agents({ language }: { language: string }) {
                 />
               )}
               <div style={{ flex: 1 }}>
-                {/* Play Voice Line Button */}
                 {selectedAgent.voiceLine?.mediaList?.[0]?.wave && (
                   <Button
                     type="primary"
@@ -317,13 +320,11 @@ export default function Agents({ language }: { language: string }) {
               </div>
             </div>
 
-            {/* Abilities Section */}
             <div>
               <div style={{ color: '#ff4655', fontWeight: 'bold', fontSize: '15px', letterSpacing: '1px', marginBottom: '16px', borderBottom: '1px dashed #2e303a', paddingBottom: '8px' }}>
                 {isVi ? 'KỸ NĂNG ĐẶC BIỆT' : 'SPECIAL ABILITIES'}
               </div>
 
-              {/* Skills Icons Tabs Selector */}
               <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
                 {selectedAgent.abilities?.map((ability, idx) => (
                   <div
@@ -363,7 +364,6 @@ export default function Agents({ language }: { language: string }) {
                 ))}
               </div>
 
-              {/* Active Skill Details */}
               {activeAbility && (
                 <div
                   style={{

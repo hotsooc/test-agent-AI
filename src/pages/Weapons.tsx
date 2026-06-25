@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, Row, Col, Radio, Modal, Avatar, Tooltip, Progress, Table, Image, Tag, Button, Input } from 'antd';
 import { ThunderboltOutlined, SecurityScanOutlined, PlaySquareOutlined, SearchOutlined } from '@ant-design/icons';
@@ -33,7 +33,6 @@ export default function Weapons({ language }: { language: string }) {
     fetchWeapons();
   }, [language]);
 
-  // Standard weapon categories derived from their shopData or custom mapping
   const getCategoryName = (category: string | null | undefined) => {
     if (!category) return isVi ? 'Cận chiến' : 'Melee';
     const parts = category.split('::');
@@ -60,7 +59,6 @@ export default function Weapons({ language }: { language: string }) {
   const handleOpenDetails = (weapon: Weapon) => {
     setSelectedWeapon(weapon);
     const skins = weapon.skins || [];
-    // Find first standard or custom skin with valid icon
     const firstSkin = skins.find(s => s.displayIcon && s.displayName.indexOf('Standard') === -1) || skins[0];
     setActiveSkin(firstSkin || null);
     setActiveChromaIdx(0);
@@ -84,7 +82,6 @@ export default function Weapons({ language }: { language: string }) {
 
   if (loading) return <Loader tip={isVi ? "Đang tải danh sách Vũ khí..." : "Loading Weapons data..."} />;
 
-  // Generate Stats columns for damage ranges
   const damageColumns = [
     { title: isVi ? 'Cự ly (m)' : 'Range (m)', dataIndex: 'range', key: 'range', width: '30%' },
     { title: isVi ? 'Đầu 🎯' : 'Head 🎯', dataIndex: 'head', key: 'head', width: '23%', render: (val: number) => <span style={{ color: '#ff4655', fontWeight: 'bold' }}>{Math.round(val)}</span> },
@@ -103,7 +100,6 @@ export default function Weapons({ language }: { language: string }) {
     }));
   };
 
-  // Filter skins by search term
   const getFilteredSkins = () => {
     if (!selectedWeapon) return [];
     return (selectedWeapon.skins || []).filter(
@@ -115,7 +111,6 @@ export default function Weapons({ language }: { language: string }) {
 
   return (
     <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', fontFamily: "'Outfit', sans-serif" }}>
-      {/* Page Title */}
       <div style={{ textAlign: 'left', marginBottom: '32px' }}>
         <h2 style={{ color: '#ff4655', letterSpacing: '2px', fontSize: '14px', fontWeight: 'bold', margin: '0 0 4px 0' }}>
           {isVi ? 'VALORANT VŨ KHÍ' : 'VALORANT WEAPONS'}
@@ -125,7 +120,6 @@ export default function Weapons({ language }: { language: string }) {
         </h1>
       </div>
 
-      {/* Filter Tabs */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px' }}>
         <Radio.Group
           value={selectedCategory}
@@ -163,7 +157,6 @@ export default function Weapons({ language }: { language: string }) {
         </Radio.Group>
       </div>
 
-      {/* Weapons Grid */}
       <Row gutter={[24, 24]}>
         {filteredWeapons.map((weapon) => (
           <Col xs={24} sm={12} md={8} key={weapon.uuid}>
@@ -181,7 +174,6 @@ export default function Weapons({ language }: { language: string }) {
               }}
               styles={{ body: { padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' } }}
             >
-              {/* Display Icon */}
               <div style={{ minHeight: '110px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
                 <motion.img
                   src={weapon.displayIcon}
@@ -196,7 +188,6 @@ export default function Weapons({ language }: { language: string }) {
                 />
               </div>
 
-              {/* Title & Stats */}
               <div>
                 <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#ffffff', letterSpacing: '0.5px' }}>
@@ -219,7 +210,6 @@ export default function Weapons({ language }: { language: string }) {
         ))}
       </Row>
 
-      {/* Weapon & Skins Detail Modal */}
       <Modal
         title={
           selectedWeapon ? (
@@ -251,7 +241,6 @@ export default function Weapons({ language }: { language: string }) {
       >
         {selectedWeapon && (
           <div style={{ fontFamily: "'Outfit', sans-serif" }}>
-            {/* Stats + Weapon Damage Row */}
             <Row gutter={[24, 24]} style={{ marginBottom: '32px' }}>
               <Col xs={24} md={12}>
                 <div
@@ -332,14 +321,12 @@ export default function Weapons({ language }: { language: string }) {
               </Col>
             </Row>
 
-            {/* Skins Showcase Grid */}
             <div>
               <div style={{ color: '#ff4655', fontWeight: 'bold', fontSize: '14px', letterSpacing: '1px', marginBottom: '16px', borderBottom: '1px solid #2e303a', paddingBottom: '8px' }}>
                 {isVi ? 'BỘ SƯU TẬP SKINS VŨ KHÍ' : 'WEAPON SKINS COLLECTION'} ({getFilteredSkins().length})
               </div>
 
               <Row gutter={[16, 16]}>
-                {/* Skins List Menu Side with Search Bar */}
                 <Col xs={24} md={8}>
                   <div style={{ marginBottom: '12px' }}>
                     <Input
@@ -397,7 +384,6 @@ export default function Weapons({ language }: { language: string }) {
                   </div>
                 </Col>
 
-                {/* Skin Large Visual Displayer */}
                 <Col xs={24} md={16}>
                   {activeSkin && (
                     <div
@@ -413,7 +399,6 @@ export default function Weapons({ language }: { language: string }) {
                         justifyContent: 'space-between',
                       }}
                     >
-                      {/* Large Preview */}
                       <div>
                         <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#ffffff', marginBottom: '16px' }}>
                           {activeSkin.displayName.toUpperCase()}
@@ -434,7 +419,6 @@ export default function Weapons({ language }: { language: string }) {
                         </div>
                       </div>
 
-                      {/* Chroma selector / levels video player */}
                       <div style={{ marginTop: '20px' }}>
                         {activeSkin.chromas && activeSkin.chromas.length > 1 && (
                           <div style={{ marginBottom: '16px' }}>
@@ -471,7 +455,6 @@ export default function Weapons({ language }: { language: string }) {
                           </div>
                         )}
 
-                        {/* Streamed level Video presentation if available - Embedded locally */}
                         {activeSkin.levels &&
                           activeSkin.levels.some((level) => level.streamedVideo) && (
                             <div style={{ textAlign: 'left', marginTop: '16px' }}>
@@ -482,7 +465,6 @@ export default function Weapons({ language }: { language: string }) {
                                 {activeSkin.levels
                                   .filter((level) => level.streamedVideo)
                                   .map((level, idx) => {
-                                    // Find correct level index in main levels list
                                     const mainIdx = activeSkin.levels.findIndex(l => l.uuid === level.uuid);
                                     return (
                                       <Button
@@ -504,7 +486,6 @@ export default function Weapons({ language }: { language: string }) {
                                   })}
                               </div>
 
-                              {/* Embedded Video Displayer */}
                               {activeLevelIdx !== -1 && activeSkin.levels[activeLevelIdx]?.streamedVideo && (
                                 <div style={{ border: '1px solid rgba(255, 70, 85, 0.3)', borderRadius: '6px', overflow: 'hidden', background: '#000', marginTop: '8px' }}>
                                   <video

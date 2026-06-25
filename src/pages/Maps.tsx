@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, Row, Col, Modal, Image } from 'antd';
 import { CompassOutlined, GlobalOutlined } from '@ant-design/icons';
