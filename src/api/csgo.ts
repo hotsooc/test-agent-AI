@@ -5,7 +5,7 @@ import { csgoAgents, csgoWeapons, csgoMaps, csgoPatchNotes } from '../data/csgoD
 
 const SKINS_URL = 'https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/skins.json'
 const AGENTS_URL = 'https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/api/en/agents.json'
-const BASE_WEAPONS_CDN = 'https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/weapons/base_weapons'
+const BASE_WEAPONS_CDN = 'https://images.weserv.nl/?url=https://raw.githubusercontent.com/ByMykel/counter-strike-image-tracker/main/static/panorama/images/econ/weapons/base_weapons'
 
 let cachedWeapons: Weapon[] = []
 let cachedAgents: Agent[] = []
@@ -17,7 +17,7 @@ const BASE_WEAPONS = [
     category: 'EWeaponCategory::Rifle',
     cost: 2700,
     categoryText: 'Súng trường',
-    displayIcon: `${BASE_WEAPONS_CDN}/weapon_ak47.png`,
+    displayIcon: `${BASE_WEAPONS_CDN}/weapon_ak47_png.png`,
     magazineSize: 30,
     fireRate: 10,
     wallPenetration: 'High',
@@ -30,7 +30,7 @@ const BASE_WEAPONS = [
     category: 'EWeaponCategory::Rifle',
     cost: 3100,
     categoryText: 'Súng trường',
-    displayIcon: `${BASE_WEAPONS_CDN}/weapon_m4a1.png`,
+    displayIcon: `${BASE_WEAPONS_CDN}/weapon_m4a1_png.png`,
     magazineSize: 30,
     fireRate: 11,
     wallPenetration: 'Medium',
@@ -43,7 +43,7 @@ const BASE_WEAPONS = [
     category: 'EWeaponCategory::Rifle',
     cost: 2900,
     categoryText: 'Súng trường',
-    displayIcon: `${BASE_WEAPONS_CDN}/weapon_m4a1_silencer.png`,
+    displayIcon: `${BASE_WEAPONS_CDN}/weapon_m4a1_silencer_png.png`,
     magazineSize: 20,
     fireRate: 10,
     wallPenetration: 'Medium',
@@ -56,7 +56,7 @@ const BASE_WEAPONS = [
     category: 'EWeaponCategory::Sniper',
     cost: 4750,
     categoryText: 'Súng bắn tỉa',
-    displayIcon: `${BASE_WEAPONS_CDN}/weapon_awp.png`,
+    displayIcon: `${BASE_WEAPONS_CDN}/weapon_awp_png.png`,
     magazineSize: 5,
     fireRate: 0.89,
     wallPenetration: 'High',
@@ -69,7 +69,7 @@ const BASE_WEAPONS = [
     category: 'EWeaponCategory::Sidearm',
     cost: 700,
     categoryText: 'Súng lục',
-    displayIcon: `${BASE_WEAPONS_CDN}/weapon_deagle.png`,
+    displayIcon: `${BASE_WEAPONS_CDN}/weapon_deagle_png.png`,
     magazineSize: 7,
     fireRate: 4,
     wallPenetration: 'High',
@@ -82,7 +82,7 @@ const BASE_WEAPONS = [
     category: 'EWeaponCategory::Sidearm',
     cost: 200,
     categoryText: 'Súng lục',
-    displayIcon: `${BASE_WEAPONS_CDN}/weapon_glock.png`,
+    displayIcon: `${BASE_WEAPONS_CDN}/weapon_glock_png.png`,
     magazineSize: 20,
     fireRate: 6.67,
     wallPenetration: 'Low',
@@ -95,7 +95,7 @@ const BASE_WEAPONS = [
     category: 'EWeaponCategory::Sidearm',
     cost: 200,
     categoryText: 'Súng lục',
-    displayIcon: `${BASE_WEAPONS_CDN}/weapon_usp_silencer.png`,
+    displayIcon: `${BASE_WEAPONS_CDN}/weapon_usp_silencer_png.png`,
     magazineSize: 12,
     fireRate: 5.88,
     wallPenetration: 'Low',
@@ -108,7 +108,7 @@ const BASE_WEAPONS = [
     category: 'EWeaponCategory::Melee',
     cost: 0,
     categoryText: 'Dao / Cận chiến',
-    displayIcon: `${BASE_WEAPONS_CDN}/weapon_knife.png`,
+    displayIcon: `${BASE_WEAPONS_CDN}/weapon_knife_png.png`,
     magazineSize: 0,
     fireRate: 0,
     wallPenetration: 'Low',
