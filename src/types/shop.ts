@@ -37,6 +37,7 @@ export interface SkinAppearanceRecord {
   weaponName: string
   weaponCategory?: string
   count: number
+  accountCounts?: Record<string, number> // Số lần xuất hiện chia theo từng tài khoản: { 'acc-1': 2, 'acc-2': 1, 'acc-3': 0 }
   lastSeen: string // 'YYYY-MM-DD'
   historyDates: string[]
   accountIds?: string[] // Track which accounts have had this skin

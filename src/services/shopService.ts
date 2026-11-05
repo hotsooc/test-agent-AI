@@ -4,6 +4,7 @@ import { FALLBACK_SHOP_SKINS, TIER_CONFIG } from '../data/fallbackSkins'
 
 const STORAGE_COUNTER_KEY = 'valorant_skin_counter'
 const STORAGE_HISTORY_DATES_KEY = 'valorant_shop_history_dates'
+const STORAGE_ACCOUNT_HISTORY_KEY = 'valorant_shop_account_history'
 const STORAGE_FAVORITES_KEY = 'valorant_favorite_skins'
 
 export function determineTier(skin: Skin): ShopTier {
@@ -206,18 +207,44 @@ export function getStoredHistoryDates(): string[] {
   }
 }
 
+export function getStoredAccountHistory(): Record<string, string[]> {
+  try {
+    const raw = localStorage.getItem(STORAGE_ACCOUNT_HISTORY_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+export function saveStoredAccountHistory(history: Record<string, string[]>): void {
+  try {
+    localStorage.setItem(STORAGE_ACCOUNT_HISTORY_KEY, JSON.stringify(history))
+  } catch (e) {
+    console.error(e)
+  }
+}
+
 export function recordShopAppearance(
   items: DailyShopItem[],
   dateStr: string,
+  accountId = 'acc-1',
 ): { counter: Record<string, SkinAppearanceRecord>; isNewDate: boolean } {
+  const accountHistory = getStoredAccountHistory()
   const historyDates = getStoredHistoryDates()
   const counter = getStoredAppearanceCounter()
 
-  const isNewDate = !historyDates.includes(dateStr)
+  const datesForAcc = accountHistory[accountId] || []
+  const isNewForAccount = !datesForAcc.includes(dateStr)
 
-  if (isNewDate) {
-    historyDates.push(dateStr)
-    localStorage.setItem(STORAGE_HISTORY_DATES_KEY, JSON.stringify(historyDates))
+  if (isNewForAccount) {
+    datesForAcc.push(dateStr)
+    accountHistory[accountId] = datesForAcc
+    saveStoredAccountHistory(accountHistory)
+
+    if (!historyDates.includes(dateStr)) {
+      historyDates.push(dateStr)
+      localStorage.setItem(STORAGE_HISTORY_DATES_KEY, JSON.stringify(historyDates))
+    }
 
     for (const item of items) {
       const existing = counter[item.skinUuid] || {
@@ -227,11 +254,21 @@ export function recordShopAppearance(
         weaponName: item.weaponName,
         weaponCategory: item.weaponCategory,
         count: 0,
+        accountCounts: {},
         lastSeen: dateStr,
         historyDates: [],
+        accountIds: [],
       }
 
-      existing.count += 1
+      existing.count = (existing.count || 0) + 1
+      existing.accountCounts = existing.accountCounts || {}
+      existing.accountCounts[accountId] = (existing.accountCounts[accountId] || 0) + 1
+
+      existing.accountIds = existing.accountIds || []
+      if (!existing.accountIds.includes(accountId)) {
+        existing.accountIds.push(accountId)
+      }
+
       existing.lastSeen = dateStr
       if (!existing.historyDates.includes(dateStr)) {
         existing.historyDates.push(dateStr)
@@ -242,13 +279,14 @@ export function recordShopAppearance(
     localStorage.setItem(STORAGE_COUNTER_KEY, JSON.stringify(counter))
   }
 
-  return { counter, isNewDate }
+  return { counter, isNewDate: isNewForAccount }
 }
 
 export function resetAppearanceCounter(): void {
   try {
     localStorage.removeItem(STORAGE_COUNTER_KEY)
     localStorage.removeItem(STORAGE_HISTORY_DATES_KEY)
+    localStorage.removeItem(STORAGE_ACCOUNT_HISTORY_KEY)
   } catch (e) {
     console.error(e)
   }
@@ -260,34 +298,58 @@ export function simulatePastHistory(
 ): Record<string, SkinAppearanceRecord> {
   const counter = getStoredAppearanceCounter()
   const historyDates = getStoredHistoryDates()
+  const accountHistory = getStoredAccountHistory()
+  const accountIds = ['acc-1', 'acc-2', 'acc-3']
 
   for (let i = daysCount; i >= 1; i--) {
     const dateStr = getTodayDateString(-i)
-    if (historyDates.includes(dateStr)) continue
+    if (!historyDates.includes(dateStr)) {
+      historyDates.push(dateStr)
+    }
 
-    const dayShop = generateDailyShop(dateStr, eligiblePool, true)
-    historyDates.push(dateStr)
+    for (const accId of accountIds) {
+      const datesForAcc = accountHistory[accId] || []
+      if (datesForAcc.includes(dateStr)) continue
+      datesForAcc.push(dateStr)
+      accountHistory[accId] = datesForAcc
 
-    for (const item of dayShop.items) {
-      const existing = counter[item.skinUuid] || {
-        skinUuid: item.skinUuid,
-        skinName: item.displayName,
-        skinIcon: item.displayIcon,
-        weaponName: item.weaponName,
-        weaponCategory: item.weaponCategory,
-        count: 0,
-        lastSeen: dateStr,
-        historyDates: [],
+      // Random 4 skins for each account
+      const shuffled = [...eligiblePool].sort(() => 0.5 - Math.random())
+      const picked = shuffled.slice(0, 4)
+
+      for (const item of picked) {
+        const existing = counter[item.skinUuid] || {
+          skinUuid: item.skinUuid,
+          skinName: item.displayName,
+          skinIcon: item.displayIcon,
+          weaponName: item.weaponName,
+          weaponCategory: item.weaponCategory,
+          count: 0,
+          accountCounts: {},
+          lastSeen: dateStr,
+          historyDates: [],
+          accountIds: [],
+        }
+
+        existing.count = (existing.count || 0) + 1
+        existing.accountCounts = existing.accountCounts || {}
+        existing.accountCounts[accId] = (existing.accountCounts[accId] || 0) + 1
+
+        existing.accountIds = existing.accountIds || []
+        if (!existing.accountIds.includes(accId)) {
+          existing.accountIds.push(accId)
+        }
+
+        existing.lastSeen = dateStr
+        if (!existing.historyDates.includes(dateStr)) {
+          existing.historyDates.push(dateStr)
+        }
+        counter[item.skinUuid] = existing
       }
-      existing.count += 1
-      existing.lastSeen = dateStr
-      if (!existing.historyDates.includes(dateStr)) {
-        existing.historyDates.push(dateStr)
-      }
-      counter[item.skinUuid] = existing
     }
   }
 
+  saveStoredAccountHistory(accountHistory)
   localStorage.setItem(STORAGE_HISTORY_DATES_KEY, JSON.stringify(historyDates))
   localStorage.setItem(STORAGE_COUNTER_KEY, JSON.stringify(counter))
   return counter
@@ -323,4 +385,54 @@ export function toggleFavorite(skinUuid: string): string[] {
   saveFavorites(updated)
   return updated
 }
+
+// Export / Import Data Sync between Local and Web
+export function exportAllUserData(): string {
+  try {
+    const data = {
+      favorites: getStoredFavorites(),
+      accounts: JSON.parse(localStorage.getItem('valorant_riot_accounts') || '[]'),
+      settings: JSON.parse(localStorage.getItem('valorant_notification_settings') || '{}'),
+      counter: getStoredAppearanceCounter(),
+      accountHistory: getStoredAccountHistory(),
+      timestamp: Date.now(),
+    }
+    return btoa(unescape(encodeURIComponent(JSON.stringify(data))))
+  } catch (e) {
+    console.error('Export error:', e)
+    return ''
+  }
+}
+
+export function importAllUserData(encoded: string): boolean {
+  try {
+    let jsonStr = ''
+    try {
+      jsonStr = decodeURIComponent(escape(atob(encoded.trim())))
+    } catch {
+      jsonStr = encoded.trim()
+    }
+    const data = JSON.parse(jsonStr)
+    if (data.favorites && Array.isArray(data.favorites)) {
+      saveFavorites(data.favorites)
+    }
+    if (data.accounts && Array.isArray(data.accounts)) {
+      localStorage.setItem('valorant_riot_accounts', JSON.stringify(data.accounts))
+    }
+    if (data.settings && typeof data.settings === 'object') {
+      localStorage.setItem('valorant_notification_settings', JSON.stringify(data.settings))
+    }
+    if (data.counter && typeof data.counter === 'object') {
+      localStorage.setItem('valorant_skin_counter', JSON.stringify(data.counter))
+    }
+    if (data.accountHistory && typeof data.accountHistory === 'object') {
+      saveStoredAccountHistory(data.accountHistory)
+    }
+    return true
+  } catch (e) {
+    console.error('Import error:', e)
+    return false
+  }
+}
+
 

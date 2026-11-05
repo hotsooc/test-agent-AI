@@ -10,6 +10,7 @@ import {
   SettingOutlined,
   SyncOutlined,
   WalletOutlined,
+  CloudSyncOutlined,
 } from '@ant-design/icons'
 import { motion, AnimatePresence } from 'framer-motion'
 import PageContainer from '../../components/PageContainer'
@@ -17,6 +18,7 @@ import DailyShopCard from '../../components/shop/DailyShopCard'
 import AppearanceCounterTable from '../../components/shop/AppearanceCounterTable'
 import NotificationSettingsModal from '../../components/shop/NotificationSettingsModal'
 import RiotAccountModal from '../../components/shop/RiotAccountModal'
+import DataSyncModal from '../../components/shop/DataSyncModal'
 import SkinDetailModal from '../../components/weapons/SkinDetailModal'
 import Loader from '../../components/Loader'
 import { useShop } from '../../context/ShopContext'
@@ -51,6 +53,7 @@ export default function DailyShopPage() {
 
   const [notificationModalOpen, setNotificationModalOpen] = useState(false)
   const [riotAccountModalOpen, setRiotAccountModalOpen] = useState(false)
+  const [syncModalOpen, setSyncModalOpen] = useState(false)
   const [selectedSkin, setSelectedSkin] = useState<Skin | null>(null)
   const [activeTab, setActiveTab] = useState('shop')
   const [favSearchQuery, setFavSearchQuery] = useState('')
@@ -174,6 +177,21 @@ export default function DailyShopPage() {
             className="!h-10 !text-xs !tracking-wider uppercase !bg-transparent hover:!bg-white/5"
           >
             {isVi ? 'Báo Điện Thoại' : 'Phone Alerts'}
+          </Button>
+
+          {/* Action: Sync Data between Local and Web */}
+          <Button
+            icon={<CloudSyncOutlined />}
+            onClick={() => setSyncModalOpen(true)}
+            style={{
+              borderColor: '#3b82f6',
+              color: '#60a5fa',
+              fontWeight: 'bold',
+            }}
+            className="!h-10 !text-xs !tracking-wider uppercase !bg-blue-500/10 hover:!bg-blue-500/20"
+            title={isVi ? 'Đồng bộ danh sách yêu thích & tài khoản giữa Local và Web' : 'Sync favorites & accounts'}
+          >
+            {isVi ? 'Đồng Bộ Local ⇄ Web' : 'Sync'}
           </Button>
 
           {/* Action: Refresh all 3 accounts */}
@@ -609,12 +627,33 @@ export default function DailyShopPage() {
                   ? 'Hãy nhấn biểu tượng trái tim ❤️ ở trang Cửa hàng hoặc mục Vũ khí để theo dõi skin bạn muốn mua!'
                   : 'Click the heart icon on any skin to start tracking!'}
               </p>
-              <Button type="primary" onClick={() => setActiveTab('shop')} style={{ backgroundColor: colorPrimary }}>
-                {isVi ? 'Khám Phá Cửa Hàng Hôm Nay' : 'Browse Today Shop'}
-              </Button>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Button type="primary" onClick={() => setActiveTab('shop')} style={{ backgroundColor: colorPrimary }}>
+                  {isVi ? 'Khám Phá Cửa Hàng Hôm Nay' : 'Browse Today Shop'}
+                </Button>
+                <Button
+                  icon={<CloudSyncOutlined />}
+                  onClick={() => setSyncModalOpen(true)}
+                  className="!bg-blue-500/10 !text-blue-400 !border-blue-500/30 font-bold"
+                >
+                  {isVi ? 'Đồng Bộ Từ Máy Tính (Local)' : 'Sync From Local'}
+                </Button>
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-xs text-[#8f9499] px-1">
+                <span>
+                  {isVi ? `Đang theo dõi ${favoritedSkinsList.length} skin yêu thích` : `Watching ${favoritedSkinsList.length} skins`}
+                </span>
+                <button
+                  onClick={() => setSyncModalOpen(true)}
+                  className="text-blue-400 hover:text-blue-300 flex items-center gap-1 cursor-pointer bg-transparent border-none text-xs font-semibold"
+                >
+                  <CloudSyncOutlined /> {isVi ? 'Đồng Bộ Sang Web / Điện Thoại' : 'Sync to Web / Mobile'}
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {favoritedSkinsList.map((item) => {
                 const matchedAccounts = riotAccounts.filter((a) =>
                   a.shop?.items.some((i) => i.skinUuid === item.skinUuid),
@@ -682,6 +721,7 @@ export default function DailyShopPage() {
                   </div>
                 )
               })}
+              </div>
             </div>
           )}
         </div>
@@ -700,6 +740,12 @@ export default function DailyShopPage() {
       <RiotAccountModal
         open={riotAccountModalOpen}
         onClose={() => setRiotAccountModalOpen(false)}
+      />
+
+      {/* Local ⇄ Web Data Sync Modal */}
+      <DataSyncModal
+        open={syncModalOpen}
+        onClose={() => setSyncModalOpen(false)}
       />
     </PageContainer>
   )

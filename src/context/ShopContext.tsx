@@ -18,6 +18,8 @@ import {
   getStoredFavorites,
   toggleFavorite as toggleFavInStorage,
   getSecondsUntilNextReset,
+  exportAllUserData,
+  importAllUserData,
 } from '../services/shopService'
 import {
   getStoredNotificationSettings,
@@ -72,6 +74,8 @@ interface ShopContextType {
   refreshAccountShop: (id: string) => Promise<void>
   refreshAllAccounts: () => Promise<void>
   isRefreshingAccounts: boolean
+  exportData: () => string
+  importData: (code: string) => boolean
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined)
@@ -251,9 +255,9 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         return next
       })
 
-      // Record appearances in counter if success
+      // Record appearances in counter for this specific account
       if (res.success && res.shop) {
-        const { counter } = recordShopAppearance(res.shop.items, currentDateStr)
+        const { counter } = recordShopAppearance(res.shop.items, currentDateStr, accId)
         setAppearanceCounter({ ...counter })
       }
     },
@@ -442,14 +446,70 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     [eligibleSkins],
   )
 
+  // Ensure accounts with existing shops have their items recorded for all accounts
+  useEffect(() => {
+    let anyRecorded = false
+    let latestCounter: Record<string, SkinAppearanceRecord> = {}
+    for (const acc of riotAccounts) {
+      if (acc.shop?.items && acc.shop.items.length > 0) {
+        const { counter, isNewDate } = recordShopAppearance(acc.shop.items, currentDateStr, acc.id)
+        if (isNewDate) {
+          anyRecorded = true
+          latestCounter = counter
+        }
+      }
+    }
+    if (anyRecorded) {
+      setAppearanceCounter({ ...latestCounter })
+    }
+  }, [riotAccounts, currentDateStr])
+
   const resetCounter = useCallback(() => {
     resetAppearanceCounter()
     setAppearanceCounter({})
-    if (dailyShop) {
-      const { counter } = recordShopAppearance(dailyShop.items, currentDateStr)
+    let lastCounter: Record<string, SkinAppearanceRecord> = {}
+    let hasAccShops = false
+    for (const acc of riotAccounts) {
+      if (acc.shop?.items && acc.shop.items.length > 0) {
+        const { counter } = recordShopAppearance(acc.shop.items, currentDateStr, acc.id)
+        lastCounter = counter
+        hasAccShops = true
+      }
+    }
+    if (hasAccShops) {
+      setAppearanceCounter({ ...lastCounter })
+    } else if (dailyShop) {
+      const { counter } = recordShopAppearance(dailyShop.items, currentDateStr, 'acc-1')
       setAppearanceCounter({ ...counter })
     }
-  }, [dailyShop, currentDateStr])
+  }, [riotAccounts, dailyShop, currentDateStr])
+
+  const exportData = useCallback(() => {
+    return exportAllUserData()
+  }, [])
+
+  const importData = useCallback((code: string) => {
+    const ok = importAllUserData(code)
+    if (ok) {
+      setFavorites(getStoredFavorites())
+      setRiotAccounts(getStoredRiotAccounts())
+      setNotificationSettings(getStoredNotificationSettings())
+      setAppearanceCounter(getStoredAppearanceCounter())
+    }
+    return ok
+  }, [])
+
+  // Auto-sync when URL has #sync=...
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash && hash.includes('sync=')) {
+      const code = hash.split('sync=')[1]?.split('&')[0]
+      if (code) {
+        importData(code)
+        window.history.replaceState(null, '', window.location.pathname)
+      }
+    }
+  }, [importData])
 
   const value = {
     dailyShop,
@@ -480,6 +540,8 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     refreshAccountShop,
     refreshAllAccounts,
     isRefreshingAccounts,
+    exportData,
+    importData,
   }
 
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>
