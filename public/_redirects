@@ -1,0 +1,9 @@
+/riot-auth/*  https://auth.riotgames.com/:splat  200!
+/riot-entitlements/*  https://entitlements.auth.riotgames.com/:splat  200!
+/riot-pas/*  https://riot-geo.pas.si.riotgames.com/:splat  200!
+/riot-pd-ap/*  https://pd.ap.a.pvp.net/:splat  200!
+/riot-pd-na/*  https://pd.na.a.pvp.net/:splat  200!
+/riot-pd-eu/*  https://pd.eu.a.pvp.net/:splat  200!
+/riot-pd-kr/*  https://pd.kr.a.pvp.net/:splat  200!
+/riot-shared-ap/*  https://shared.ap.a.pvp.net/:splat  200!
+/*  /index.html  200

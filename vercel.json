@@ -1,0 +1,40 @@
+{
+  "rewrites": [
+    {
+      "source": "/riot-auth/:path*",
+      "destination": "https://auth.riotgames.com/:path*"
+    },
+    {
+      "source": "/riot-entitlements/:path*",
+      "destination": "https://entitlements.auth.riotgames.com/:path*"
+    },
+    {
+      "source": "/riot-pas/:path*",
+      "destination": "https://riot-geo.pas.si.riotgames.com/:path*"
+    },
+    {
+      "source": "/riot-pd-ap/:path*",
+      "destination": "https://pd.ap.a.pvp.net/:path*"
+    },
+    {
+      "source": "/riot-pd-na/:path*",
+      "destination": "https://pd.na.a.pvp.net/:path*"
+    },
+    {
+      "source": "/riot-pd-eu/:path*",
+      "destination": "https://pd.eu.a.pvp.net/:path*"
+    },
+    {
+      "source": "/riot-pd-kr/:path*",
+      "destination": "https://pd.kr.a.pvp.net/:path*"
+    },
+    {
+      "source": "/riot-shared-ap/:path*",
+      "destination": "https://shared.ap.a.pvp.net/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

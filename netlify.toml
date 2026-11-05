@@ -1,0 +1,56 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/riot-auth/*"
+  to = "https://auth.riotgames.com/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/riot-entitlements/*"
+  to = "https://entitlements.auth.riotgames.com/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/riot-pas/*"
+  to = "https://riot-geo.pas.si.riotgames.com/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/riot-pd-ap/*"
+  to = "https://pd.ap.a.pvp.net/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/riot-pd-na/*"
+  to = "https://pd.na.a.pvp.net/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/riot-pd-eu/*"
+  to = "https://pd.eu.a.pvp.net/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/riot-pd-kr/*"
+  to = "https://pd.kr.a.pvp.net/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/riot-shared-ap/*"
+  to = "https://shared.ap.a.pvp.net/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
