@@ -1,19 +1,28 @@
 import { motion } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useGame } from '../../context/GameContext'
+import { useShop } from '../../context/ShopContext'
 
 export default function AppHeader({ language, setLanguage }: { language: string; setLanguage: (lang: string) => void }) {
   const navigate = useNavigate()
   const location = useLocation()
   const { setGame, isValorant, colorPrimary } = useGame()
+  const { matchedFavorites } = useShop()
 
   const navItems = [
     { key: '/', label: 'TRANG CHỦ', labelEn: 'HOME', num: '01' },
     { key: '/agents', label: isValorant ? 'ĐẶC VỤ' : 'BIỆT KÍCH', labelEn: 'AGENTS', num: '02' },
     { key: '/weapons', label: 'VŨ KHÍ', labelEn: 'WEAPONS', num: '03' },
     { key: '/maps', label: 'BẢN ĐỒ', labelEn: 'MAPS', num: '04' },
-    { key: '/updates', label: 'CẬP NHẬT', labelEn: 'UPDATES', num: '05' },
-    { key: '/3d-hub', label: 'ARSENAL 3D', labelEn: '3D HUB', num: '06' },
+    {
+      key: '/shop',
+      label: 'CỬA HÀNG',
+      labelEn: 'DAILY SHOP',
+      num: '05',
+      badge: matchedFavorites.length > 0 ? `★ ${matchedFavorites.length}` : null,
+    },
+    { key: '/updates', label: 'CẬP NHẬT', labelEn: 'UPDATES', num: '06' },
+    { key: '/3d-hub', label: 'ARSENAL 3D', labelEn: '3D HUB', num: '07' },
   ]
 
   const isActive = (path: string) => location.pathname === path
@@ -54,7 +63,14 @@ export default function AppHeader({ language, setLanguage }: { language: string;
             onClick={() => navigate(item.key)}
           >
             <span className="text-[9px] opacity-40 font-mono tracking-normal mb-0.5">{item.num}</span>
-            {language === 'vi-VN' ? item.label : item.labelEn}
+            <div className="flex items-center gap-1">
+              <span>{language === 'vi-VN' ? item.label : item.labelEn}</span>
+              {item.badge && (
+                <span className="px-1.5 py-0.2 rounded-full bg-amber-500 text-black text-[9px] font-black animate-bounce shadow-md">
+                  {item.badge}
+                </span>
+              )}
+            </div>
             {isActive(item.key) && (
               <motion.div
                 layoutId="active-indicator"

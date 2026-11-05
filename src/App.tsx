@@ -8,6 +8,7 @@ import AppFooter from './components/layout/AppFooter'
 import Loader from './components/Loader'
 import { LanguageContext } from './context/LanguageContext'
 import { GameProvider, useGame } from './context/GameContext'
+import { ShopProvider } from './context/ShopContext'
 import './index.css'
 
 const Home = lazy(() => import('./pages/home/index.tsx'))
@@ -16,6 +17,7 @@ const Weapons = lazy(() => import('./pages/weapons/index.tsx'))
 const Maps = lazy(() => import('./pages/maps/index.tsx'))
 const Updates = lazy(() => import('./pages/updates/index.tsx'))
 const Viewer3D = lazy(() => import('./pages/viewer3d/index.tsx'))
+const DailyShop = lazy(() => import('./pages/shop/index.tsx'))
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -44,6 +46,7 @@ function AnimatedRoutes() {
             <Route path="/agents" element={<Agents />} />
             <Route path="/weapons" element={<Weapons />} />
             <Route path="/maps" element={<Maps />} />
+            <Route path="/shop" element={<DailyShop />} />
             <Route path="/updates" element={<Updates />} />
             <Route path="/3d-hub" element={<Viewer3D />} />
           </Routes>
@@ -64,39 +67,41 @@ function AppContent() {
 
   return (
     <LanguageContext.Provider value={langCtx}>
-      <ConfigProvider
-        theme={{
-          algorithm: theme.darkAlgorithm,
-          token: {
-            colorPrimary: colorPrimary,
-            colorBgBase: isValorant ? '#0c1015' : '#0a0d10',
-            colorTextBase: '#ffffff',
-            fontFamily: "'Outfit', sans-serif",
-            borderRadius: 4,
-          },
-          components: {
-            Card: {
-              colorBgContainer: cardBg,
+      <ShopProvider>
+        <ConfigProvider
+          theme={{
+            algorithm: theme.darkAlgorithm,
+            token: {
+              colorPrimary: colorPrimary,
+              colorBgBase: isValorant ? '#0c1015' : '#0a0d10',
+              colorTextBase: '#ffffff',
+              fontFamily: "'Outfit', sans-serif",
+              borderRadius: 4,
             },
-            Modal: {
-              contentBg: modalBg,
-              headerBg: headerBg,
+            components: {
+              Card: {
+                colorBgContainer: cardBg,
+              },
+              Modal: {
+                contentBg: modalBg,
+                headerBg: headerBg,
+              },
+              Drawer: {
+                colorBgContainer: modalBg,
+              },
             },
-            Drawer: {
-              colorBgContainer: modalBg,
-            },
-          },
-        }}
-      >
-        <div className="min-h-screen flex flex-col relative">
-          <ThreeBackground />
-          <AppHeader language={language} setLanguage={setLanguage} />
-          <main className="flex-1 w-full">
-            <AnimatedRoutes />
-          </main>
-          <AppFooter />
-        </div>
-      </ConfigProvider>
+          }}
+        >
+          <div className="min-h-screen flex flex-col relative">
+            <ThreeBackground />
+            <AppHeader language={language} setLanguage={setLanguage} />
+            <main className="flex-1 w-full">
+              <AnimatedRoutes />
+            </main>
+            <AppFooter />
+          </div>
+        </ConfigProvider>
+      </ShopProvider>
     </LanguageContext.Provider>
   )
 }

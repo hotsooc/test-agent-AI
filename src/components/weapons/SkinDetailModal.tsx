@@ -1,29 +1,50 @@
 import { useState } from 'react'
 import { Modal, Image, Tooltip, Button } from 'antd'
-import { PlaySquareOutlined } from '@ant-design/icons'
+import { PlaySquareOutlined, HeartOutlined, HeartFilled, FireOutlined } from '@ant-design/icons'
 import { Skin } from '../../types/valorant'
 import { useLanguage } from '../../context/LanguageContext'
 import { useGame } from '../../context/GameContext'
+import { useShop } from '../../context/ShopContext'
 
 export default function SkinDetailModal({ skin, onClose }: { skin: Skin | null; onClose: () => void }) {
   const { isVi } = useLanguage()
   const { colorPrimary } = useGame()
+  const { isFavorite, toggleFavorite, appearanceCounter } = useShop()
   const [activeChromaIdx, setActiveChromaIdx] = useState(0)
   const [activeLevelIdx, setActiveLevelIdx] = useState(-1)
 
   if (!skin) return null
 
+  const favorited = isFavorite(skin.uuid)
+  const stats = appearanceCounter[skin.uuid]
+  const appearancesCount = stats?.count || 0
+
   return (
     <Modal
       title={
-        <div className="text-white">
-          <span className="text-lg font-bold tracking-[0.5px]">{skin.displayName.toUpperCase()}</span>
-          <span 
-            className="text-xs ml-3 uppercase border-l-2 border-[#2e303a] pl-3"
-            style={{ color: colorPrimary }}
+        <div className="text-white flex items-center justify-between pr-8">
+          <div>
+            <span className="text-lg font-bold tracking-[0.5px]">{skin.displayName.toUpperCase()}</span>
+            <span 
+              className="text-xs ml-3 uppercase border-l-2 border-[#2e303a] pl-3"
+              style={{ color: colorPrimary }}
+            >
+              {isVi ? 'CHI TIẾT SKIN' : 'SKIN DETAILS'}
+            </span>
+          </div>
+
+          <Button
+            type={favorited ? 'primary' : 'default'}
+            danger={favorited}
+            icon={favorited ? <HeartFilled /> : <HeartOutlined />}
+            size="small"
+            onClick={() => toggleFavorite(skin.uuid)}
+            className="!text-xs uppercase !font-bold"
           >
-            {isVi ? 'CHI TIẾT SKIN' : 'SKIN DETAILS'}
-          </span>
+            {favorited
+              ? (isVi ? 'Đang Theo Dõi (Fav)' : 'Favorited')
+              : (isVi ? 'Thêm Vào Fav (Báo Phone)' : 'Add to Fav')}
+          </Button>
         </div>
       }
       open={skin !== null}
@@ -39,6 +60,15 @@ export default function SkinDetailModal({ skin, onClose }: { skin: Skin | null; 
       style={{ top: 80 }}
     >
       <div className="bg-white/[0.02] border border-white/5 rounded-lg p-6 text-center flex flex-col justify-between">
+        {/* Appearance stats pill if previously appeared */}
+        {appearancesCount > 0 && (
+          <div className="mb-3 flex justify-center">
+            <span className="text-xs font-bold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-3 py-1 rounded-full flex items-center gap-1.5">
+              <FireOutlined /> {isVi ? `Đã từng ra trong Daily Shop ${appearancesCount} lần (Lần gần nhất: ${stats?.lastSeen})` : `Appeared in Daily Shop ${appearancesCount} times (Last: ${stats?.lastSeen})`}
+            </span>
+          </div>
+        )}
+
         <div className="min-h-[220px] flex items-center justify-center">
           <Image
             src={skin.chromas?.[activeChromaIdx]?.displayIcon || skin.displayIcon || ''}

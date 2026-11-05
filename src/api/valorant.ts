@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { Agent, Weapon, MapData } from '../types/valorant'
+import { DailyShopData } from '../types/shop'
+import { buildEligiblePool, generateDailyShop, getTodayDateString } from '../services/shopService'
 
 const BASE_URL = 'https://valorant-api.com/v1'
 
@@ -82,4 +84,21 @@ export const getMaps = (lang: string = 'vi-VN'): Promise<MapData[]> => {
       console.error('Lỗi khi tải danh sách bản đồ:', error)
       throw error
     })
+}
+
+/**
+ * Lấy Cửa hàng Hàng ngày (Daily Shop / Rotation Store)
+ * Dựa trên thuật toán xoay tua 4 skin mỗi 24h
+ */
+export const getDailyStore = async (dateStr?: string, lang: string = 'vi-VN'): Promise<DailyShopData> => {
+  const targetDate = dateStr || getTodayDateString(0)
+  try {
+    const weapons = await getWeapons(lang)
+    const pool = buildEligiblePool(weapons)
+    return generateDailyShop(targetDate, pool, false)
+  } catch (err) {
+    console.warn('Sử dụng dữ liệu fallback cho Daily Shop:', err)
+    const pool = buildEligiblePool([])
+    return generateDailyShop(targetDate, pool, false)
+  }
 }
